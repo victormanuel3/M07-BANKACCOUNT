@@ -7,8 +7,7 @@
  * Time: 7:44 PM
  */
 
-interface OverdraftInterface
-{
-
-   
+interface OverdraftInterface{
+    public function isGrantOverdraftFunds($float) : bool;
+    public function getOverdraftFundsAmount() : float;
 }

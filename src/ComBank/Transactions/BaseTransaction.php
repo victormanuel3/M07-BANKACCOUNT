@@ -11,7 +11,7 @@ use ComBank\Exceptions\InvalidArgsException;
 use ComBank\Exceptions\ZeroAmountException;
 use ComBank\Support\Traits\AmountValidationTrait;
 
-abstract class BaseTransaction
-{
-    
+abstract class BaseTransaction{
+    use AmountValidationTrait;
+    protected $amount;
 }

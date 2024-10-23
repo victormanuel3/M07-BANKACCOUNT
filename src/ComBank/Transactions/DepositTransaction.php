@@ -10,9 +10,22 @@
 use ComBank\Bank\Contracts\BackAccountInterface;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
 
-class DepositTransaction 
-{
-
-
-   
+class DepositTransaction extends BaseTransaction implements BankTransactionInterface{
+    
+    public function __construct($amount){
+        parent::validateAmount($amount);
+        $this->amount = $amount;
+    }
+    function applyTransaction(BackAccountInterface $account) : float{
+        parent::validateAmount(amount: $this->amount);
+        $newBalance = $account->getBalance() + $this->amount; //Sumamos el saldo.
+        return $newBalance; //Retornamos el valor sumado.
+    }
+    
+    function getTransactionInfo() : string{
+        return "DEPOSIT_TRANSACTION";
+    }
+    function getAmount() : float{
+        return $this->amount;
+    }
 }

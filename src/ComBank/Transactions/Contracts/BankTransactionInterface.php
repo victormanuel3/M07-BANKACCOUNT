@@ -10,7 +10,9 @@
 use ComBank\Bank\Contracts\BackAccountInterface;
 use ComBank\Exceptions\InvalidOverdraftFundsException;
 
-interface BankTransactionInterface
-{
-    
+interface BankTransactionInterface{
+    function applyTransaction(BackAccountInterface $account) : float;
+    function getTransactionInfo() : string;
+    function getAmount() : float;
+
 }
