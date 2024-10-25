@@ -9,7 +9,7 @@ use ComBank\OverdraftStrategy\InvalidOverdraftFundsException;
  */
 
 class NoOverdraft implements OverdraftInterface{
-    public function isGrantOverdraftFunds($float) : bool{
+    public function isGrantOverdraftFunds(float $amount) : bool{
         return false;
     }
     public function getOverdraftFundsAmount() : float{
