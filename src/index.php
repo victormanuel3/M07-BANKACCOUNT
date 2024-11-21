@@ -145,6 +145,8 @@ try{
         pl($e->getMessage());
     }
     pl('My new balance after withdrawal (-5000) with funds : ' . $bankAccount3->getBalance());
+
+    pl("The maintenance fee for your postcode is: ".$bankAccount4->calculateMaintenanceRate());
 } catch (ZeroAmountException $e) {
     pl($e->getMessage());
 } catch (BankAccountException $e) {
@@ -175,7 +177,6 @@ try {
         pl($e->getMessage());
     }
     pl('My new balance after deposit (+25000) : ' . $bankAccount4->getBalance());
-
 
     pl("The maintenance fee for your postcode is: ".$bankAccount4->calculateMaintenanceRate());
 } catch (ZeroAmountException $e) {
