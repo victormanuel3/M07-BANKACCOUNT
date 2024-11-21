@@ -123,12 +123,6 @@ try{
     $bankAccount3 = new NationalBankAccount(500,"EUR",$person1);
     pl("My balance: ".number_format($bankAccount3->getBalance(),1)." € (".$bankAccount3->getCurrency().")");
 
-    try {
-        $person1->getEmailValidation();
-    }catch(PersonException $e){
-        pl($e->getMessage());
-    }
-
     pl('Doing transaction deposit (+7000) with current balance ' . $bankAccount3->getBalance());
     try{
         $bankAccount3->transaction(transaction: new DepositTransaction(7000));
@@ -145,8 +139,12 @@ try{
         pl($e->getMessage());
     }
     pl('My new balance after withdrawal (-5000) with funds : ' . $bankAccount3->getBalance());
+    try {
+        pl("The maintenance fee for your postcode is: ".$bankAccount3->calculateMaintenanceRate());
+    }catch(PersonException $e){
+        pl($e->getMessage());
+    }
 
-    pl("The maintenance fee for your postcode is: ".$bankAccount4->calculateMaintenanceRate());
 } catch (ZeroAmountException $e) {
     pl($e->getMessage());
 } catch (BankAccountException $e) {
@@ -158,7 +156,7 @@ try{
 //---[Bank account 4]---/
 pl('--------- [Start testing International account (Dollar conversion)] --------');
 try {
-    $person2 = new Person("Joel", "123456789", "john.doe@invalid-email", 90210);
+    $person2 = new Person("Joel", "123456789", "john.doe@invalid-email", 90212);
     try {
         $person2->getEmailValidation();
     }catch(PersonException $e){
@@ -177,8 +175,11 @@ try {
         pl($e->getMessage());
     }
     pl('My new balance after deposit (+25000) : ' . $bankAccount4->getBalance());
-
-    pl("The maintenance fee for your postcode is: ".$bankAccount4->calculateMaintenanceRate());
+    try {
+        pl("The maintenance fee for your postcode is: ".$bankAccount4->calculateMaintenanceRate());
+    }catch(PersonException $e){
+        pl($e->getMessage());
+    }
 } catch (ZeroAmountException $e) {
     pl($e->getMessage());
 } catch (BankAccountException $e) {

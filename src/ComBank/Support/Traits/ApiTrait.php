@@ -1,6 +1,7 @@
 <?php
 namespace ComBank\Support\Traits;
 
+use ComBank\Exceptions\PersonException;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
 use PhpParser\Node\Stmt\Foreach_;
 
@@ -107,7 +108,10 @@ trait ApiTrait {
         curl_close($ch);
 
         $json = json_decode($result,true);
-
-        return $json[0]['total_rate'];
+        if (isset($json[0]['total_rate'])){
+            return $json[0]['total_rate'];
+        }else {
+            throw new PersonException("There is no tax rate for the postcode $zip_code.");
+        }
     }
 }
