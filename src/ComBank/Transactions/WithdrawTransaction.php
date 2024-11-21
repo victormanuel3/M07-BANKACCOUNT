@@ -8,16 +8,22 @@
  */
 
 use ComBank\Bank\Contracts\BackAccountInterface;
+use ComBank\Exceptions\FailedTransactionException;
 use ComBank\Exceptions\InvalidOverdraftFundsException;
+use ComBank\Support\Traits\ApiTrait;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
 
 class WithdrawTransaction extends BaseTransaction implements BankTransactionInterface{
+    use ApiTrait;
     public function __construct($amount){
         parent::validateAmount(amount: $amount);
         $this->amount = $amount;
     }
     function applyTransaction(BackAccountInterface $account) : float{
         parent::validateAmount(amount: $this->amount);
+        if($this->detectFraud($this)){
+            throw new FailedTransactionException('The withdraw has been blocked.');
+        }
         $newBalance = $account->getBalance() - $this->amount; //Realizamos una resta del saldo.
         $overdraft = $account->getOverdraft()->isGrantOverdraftFunds($newBalance); //Verificamos si la resta del saldo es menor al límite.
         if ($newBalance < 0) { //En caso de que la resta sea menor a 0 ya no verificamos el NoVerdraft sino el silver directamente

@@ -16,19 +16,31 @@ use ComBank\Exceptions\FailedTransactionException;
 use ComBank\Exceptions\InvalidOverdraftFundsException;
 use ComBank\OverdraftStrategy\Contracts\OverdraftInterface;
 use ComBank\Support\Traits\AmountValidationTrait;
+use ComBank\Support\Traits\ApiTrait;
 use ComBank\Transactions\Contracts\BankTransactionInterface;
-use function PHPUnit\Framework\throwException;
+use ComBank\Persons\Person;
 
 class BankAccount extends BankAccountException implements BackAccountInterface {
     use AmountValidationTrait;
-    private $balance;
-    private $status = true;
-    private $overdraft;
+    use ApiTrait;
 
-    public function __construct($balance){
+    protected ?Person $person;
+    protected $balance;
+    protected $status = true;
+    protected $overdraft;
+    protected $currency;
+
+    public function __construct($balance, string $currency = 'EUR', Person $person = null){
         $this->balance = $balance;
         $this->status = BackAccountInterface ::STATUS_OPEN;
         $this->overdraft = new NoOverdraft();
+        $this->currency = $currency;
+        $this->person = $person;
+    }
+    public function calculateMaintenanceRate():float{
+        $zip_code = $this->person->getZip_code();
+        $totalRate = $this->maintenance_rate($zip_code);
+        return round($totalRate * $this->balance, 2);
     }
 
     public function transaction(BankTransactionInterface $transaction) : void{
@@ -73,18 +85,30 @@ class BankAccount extends BankAccountException implements BackAccountInterface {
         $this->overdraft = $overdraft;
     }
 
-    public function getOverdraft(): OverdraftInterface{
-        return $this->overdraft;  
-    }
-    
-    
+
     //GETTERS AND SETTERS ----------------------------------------
     public function getBalance() : float{
         return $this->balance;
     }
 
+    function getCurrency(){
+        return $this->currency;
+    }
+
     public function setBalance($float) : void{
         $this->balance = $float;
+    }
+
+    public function getOverdraft(): OverdraftInterface{
+        return $this->overdraft;  
+    }
+
+    public function getPerson(){
+        return $this->person;
+    }
+
+    public function setPerson($person){
+        $this->person = $person;
     }
 }
 
