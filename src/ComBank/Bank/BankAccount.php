@@ -44,7 +44,7 @@ class BankAccount extends BankAccountException implements BackAccountInterface {
     }
 
     public function transaction(BankTransactionInterface $transaction) : void{
-        if ($this->status == 'OPEN'){
+        if ($this->status == BackAccountInterface ::STATUS_OPEN){
             try {
                 $this->balance = $transaction->applyTransaction($this);
             }catch(InvalidOverdraftFundsException $e){
@@ -56,7 +56,7 @@ class BankAccount extends BankAccountException implements BackAccountInterface {
     }
 
     public function openAccount() : bool{
-        if ($this->status == 'OPEN') {
+        if ($this->status == BackAccountInterface ::STATUS_OPEN) {
             return true;
         }else {
             return false;
