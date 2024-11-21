@@ -113,64 +113,76 @@ try {
 
 pl('--------- [Start testing national account (No conversion)] --------');
 
-$person1 = new Person("Víctor", "1234567891", "john.doe@gmail.com", 90210);
-try {
-    $person1->getEmailValidation();
-}catch(PersonException $e){
-    pl($e->getMessage());
-}
-$bankAccount3 = new NationalBankAccount(500,"EUR",$person1);
-pl("My balance: ".number_format($bankAccount3->getBalance(),1)." € (".$bankAccount3->getCurrency().")");
-
-try {
-    $person1->getEmailValidation();
-}catch(PersonException $e){
-    pl($e->getMessage());
-}
-
-pl('Doing transaction deposit (+7000) with current balance ' . $bankAccount3->getBalance());
 try{
-    $bankAccount3->transaction(transaction: new DepositTransaction(7000));
-}catch(FailedTransactionException $e){
-    pl($e->getMessage());
-}
-pl('My new balance after deposit (+7000) : ' . $bankAccount3->getBalance());
+    $person1 = new Person("Víctor", "1234567891", "john.doe@gmail.com", 90210);
+    try {
+        $person1->getEmailValidation();
+    }catch(PersonException $e){
+        pl($e->getMessage());
+    }
+    $bankAccount3 = new NationalBankAccount(500,"EUR",$person1);
+    pl("My balance: ".number_format($bankAccount3->getBalance(),1)." € (".$bankAccount3->getCurrency().")");
+
+    try {
+        $person1->getEmailValidation();
+    }catch(PersonException $e){
+        pl($e->getMessage());
+    }
+
+    pl('Doing transaction deposit (+7000) with current balance ' . $bankAccount3->getBalance());
+    try{
+        $bankAccount3->transaction(transaction: new DepositTransaction(7000));
+    }catch(FailedTransactionException $e){
+        pl($e->getMessage());
+    }
+    pl('My new balance after deposit (+7000) : ' . $bankAccount3->getBalance());
 
 
-pl('Doing transaction withdrawal (-5000) with current balance : ' . $bankAccount3->getBalance());
-try{
-    $bankAccount3->transaction(transaction: new WithdrawTransaction(5000));
-}catch(FailedTransactionException $e){
+    pl('Doing transaction withdrawal (-5000) with current balance : ' . $bankAccount3->getBalance());
+    try{
+        $bankAccount3->transaction(transaction: new WithdrawTransaction(5000));
+    }catch(FailedTransactionException $e){
+        pl($e->getMessage());
+    }
+    pl('My new balance after withdrawal (-5000) with funds : ' . $bankAccount3->getBalance());
+} catch (ZeroAmountException $e) {
+    pl($e->getMessage());
+} catch (BankAccountException $e) {
     pl($e->getMessage());
 }
-pl('My new balance after withdrawal (-5000) with funds : ' . $bankAccount3->getBalance());
 //----------------------------------------
 
 
 //---[Bank account 4]---/
 pl('--------- [Start testing International account (Dollar conversion)] --------');
-
-$person2 = new Person("Joel", "123456789", "john.doe@invalid-email", 90210);
 try {
-    $person2->getEmailValidation();
-}catch(PersonException $e){
+    $person2 = new Person("Joel", "123456789", "john.doe@invalid-email", 90210);
+    try {
+        $person2->getEmailValidation();
+    }catch(PersonException $e){
+        pl($e->getMessage());
+    }
+    $bankAccount4 = new InternationalBankAccount(300, "EUR", $person2);
+    pl("My balance: ".number_format($bankAccount4->getBalance(),decimals: 1)." € (".$bankAccount3->getCurrency().")");
+
+    $convertBalance = $bankAccount4->convertBalance($bankAccount4->getBalance());
+    pl("Converted balance: ".number_format($convertBalance, 2)." $ (".$bankAccount4->getConvertedCurrency().")");
+
+    pl('Doing transaction deposit (+25000) with current balance ' . $bankAccount4->getBalance());
+    try{
+        $bankAccount4->transaction(transaction: new DepositTransaction(25000));
+    }catch(FailedTransactionException $e){
+        pl($e->getMessage());
+    }
+    pl('My new balance after deposit (+25000) : ' . $bankAccount4->getBalance());
+
+
+    pl("The maintenance fee for your postcode is: ".$bankAccount4->calculateMaintenanceRate());
+} catch (ZeroAmountException $e) {
+    pl($e->getMessage());
+} catch (BankAccountException $e) {
     pl($e->getMessage());
 }
-$bankAccount4 = new InternationalBankAccount(300, "EUR", $person2);
-pl("My balance: ".number_format($bankAccount4->getBalance(),decimals: 1)." € (".$bankAccount3->getCurrency().")");
 
-$convertBalance = $bankAccount4->convertBalance($bankAccount4->getBalance());
-pl("Converted balance: ".number_format($convertBalance, 2)." $ (".$bankAccount4->getConvertedCurrency().")");
-
-pl('Doing transaction deposit (+25000) with current balance ' . $bankAccount4->getBalance());
-try{
-    $bankAccount4->transaction(transaction: new DepositTransaction(25000));
-}catch(FailedTransactionException $e){
-    pl($e->getMessage());
-}
-pl('My new balance after deposit (+25000) : ' . $bankAccount4->getBalance());
-
-
-pl("The maintenance fee for your postcode is: ".$bankAccount4->calculateMaintenanceRate());
 
 //----------------------------------------

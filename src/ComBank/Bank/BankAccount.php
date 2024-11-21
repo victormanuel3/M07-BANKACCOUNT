@@ -31,6 +31,7 @@ class BankAccount extends BankAccountException implements BackAccountInterface {
     protected $currency;
 
     public function __construct($balance, string $currency = 'EUR', Person $person = null){
+        $this->validateAmount($balance);
         $this->balance = $balance;
         $this->status = BackAccountInterface ::STATUS_OPEN;
         $this->overdraft = new NoOverdraft();
